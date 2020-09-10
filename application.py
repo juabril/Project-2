@@ -1,13 +1,10 @@
 import constants
+import copy
 
 def start_stats():
-    clean_players = []
-    for player in constants.PLAYERS:
-        clean_players.append(player)
+    clean_players = copy.deepcopy(constants.PLAYERS)  
+    new_teams = copy.deepcopy(constants.TEAMS)
     
-    new_teams = []
-    for team in constants.TEAMS:
-        new_teams.append(team)
     
     def clean_data(players):    
         for element in players:
@@ -17,12 +14,9 @@ def start_stats():
                 element['experience'] = bool('')
             if 'and' in element['guardians']:
                 guardian1, guardian2 = element['guardians'].split(' and ')
-                element['guardian1'] = guardian1
-                element['guardian2'] = guardian2
-            else:
-                element['guardian1'] = element['guardians']
-                element['guardian2'] = False
-            del(element['guardians'])    
+                element['guardians'] = []
+                element['guardians'].append(guardian1)
+                element['guardians'].append(guardian2)
             element['height'] = int(element['height'][0:2])
         return players
     
@@ -86,11 +80,12 @@ def start_stats():
         print("Average height (inches): {}".format(team_avg_height))                        
         team_guardians = []
         for element in team:
-            if element['guardian2'] == False:
-                team_guardians.append(element['guardian1'])
+            if type(element['guardians']) is list:
+                guardian_a, guardian_b = element['guardians']
+                team_guardians.append(guardian_a)
+                team_guardians.append(guardian_b)
             else:
-                team_guardians.append(element['guardian1'])
-                team_guardians.append(element['guardian2'])
+                team_guardians.append(element['guardians'])               
         print("Team guardians :")
         separator = ", "
         print(separator.join(team_guardians))
